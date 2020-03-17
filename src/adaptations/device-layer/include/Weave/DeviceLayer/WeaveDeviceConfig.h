@@ -103,7 +103,7 @@
  * The maximum size (in bytes) of a debug logging message.
  */
 #ifndef WEAVE_DEVICE_CONFIG_LOG_MESSAGE_MAX_SIZE
-#define WEAVE_DEVICE_CONFIG_LOG_MESSAGE_MAX_SIZE 256
+#define WEAVE_DEVICE_CONFIG_LOG_MESSAGE_MAX_SIZE 512
 #endif
 
 /**
