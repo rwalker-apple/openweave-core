@@ -46,18 +46,21 @@ NetworkTelemetryManager NetworkTelemetryManager::sInstance;
 
 WeaveTelemetryBase::WeaveTelemetryBase()
 {
+    mEnabled = false;
 }
 
 void WeaveTelemetryBase::Init(uint32_t aIntervalMsec)
 {
     SetPollingInterval(aIntervalMsec);
-    Enable();
 }
 
 void WeaveTelemetryBase::Enable(void)
 {
-    mEnabled = true;
-    StartPollingTimer();
+    if (!mEnabled)
+    {
+        mEnabled = true;
+        StartPollingTimer();
+    }
 }
 
 void WeaveTelemetryBase::Disable(void)
@@ -109,6 +112,39 @@ WEAVE_ERROR NetworkTelemetryManager::Init(void)
     return err;
 }
 
+void NetworkTelemetryManager::OnPlatformEvent(const WeaveDeviceEvent* event)
+{
+#if WEAVE_DEVICE_CONFIG_ENABLE_WIFI_TELEMETRY
+    if (event->Type == DeviceEventType::kWiFiConnectivityChange)
+    {
+        if (ConnectivityMgr().IsWiFiStationProvisioned() && ConnectivityMgr().IsWiFiStationEnabled())
+        {
+            mWiFiTelemetry.Enable();
+        }
+    }
+#endif
+
+#if WEAVE_DEVICE_CONFIG_ENABLE_THREAD_TELEMETRY
+    if (event->Type == DeviceEventType::kThreadConnectivityChange)
+    {
+        if (ConnectivityMgr().IsThreadProvisioned() && ConnectivityMgr().IsThreadEnabled())
+        {
+            mThreadTelemetry.Enable();
+            mThreadTopology.Enable();
+        }
+    }
+#endif
+
+#if WEAVE_DEVICE_CONFIG_ENABLE_TUNNEL_TELEMETRY
+    if (event->Type == DeviceEventType::kServiceTunnelStateChange)
+    {
+        if (ConnectivityMgr().GetServiceTunnelMode() == ConnectivityManager::kServiceTunnelMode_Enabled)
+        {
+            mTunnelTelemetry.Enable();
+        }
+    }
+#endif
+}
 
 #if WEAVE_DEVICE_CONFIG_ENABLE_WIFI_TELEMETRY
 void WiFiTelemetry::GetTelemetryStatsAndLogEvent(void)

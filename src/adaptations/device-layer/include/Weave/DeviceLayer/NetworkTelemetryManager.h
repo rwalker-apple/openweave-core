@@ -140,8 +140,10 @@ public:
 #endif
 
 private:
+    template<class> friend class Internal::GenericPlatformManagerImpl;
     friend NetworkTelemetryManager & NetworkTelemetryMgr(void);
 
+    void OnPlatformEvent(const WeaveDeviceEvent * event);
     static NetworkTelemetryManager sInstance;
 };
 

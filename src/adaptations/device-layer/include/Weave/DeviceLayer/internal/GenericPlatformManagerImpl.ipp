@@ -435,6 +435,9 @@ void GenericPlatformManagerImpl<ImplClass>::DispatchEventToDeviceLayer(const Wea
     TraitMgr().OnPlatformEvent(event);
 #endif // WEAVE_DEVICE_CONFIG_ENABLE_TRAIT_MANAGER
     TimeSyncMgr().OnPlatformEvent(event);
+#if WEAVE_DEVICE_CONFIG_ENABLE_NETWORK_TELEMETRY
+    NetworkTelemetryMgr().OnPlatformEvent(event);
+#endif
 }
 
 template<class ImplClass>
