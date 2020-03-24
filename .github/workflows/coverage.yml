@@ -1,0 +1,21 @@
+name: Code Coverage
+
+on: [push, pull_request]
+
+jobs:
+  coverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Coverage
+        env:
+             CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          sudo apt install lcov libdbus-1-dev libudev-dev libical-dev libreadline-dev
+          ./bootstrap
+          ./configure --enable-coverage --enable-coverage-reports --disable-docs
+          make -C src/lwipo check
+          #  make COVERAGE=1 -f Makefile-Standalone coverage-src/lwip
+          curl -s https://codecov.io/bash | bash
